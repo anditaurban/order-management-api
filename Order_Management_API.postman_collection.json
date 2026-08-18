@@ -1,0 +1,415 @@
+{
+	"info": {
+		"_postman_id": "7f8e1234-5678-490a-bcde-f1234567890a",
+		"name": "Order Management API",
+		"description": "Postman Collection for Order Management Layered REST API (Express.js, MySQL 8+, JWT, Transactions)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "authToken",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"New User\",\n  \"email\": \"newuser@example.com\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						},
+						"description": "Register a new user account"
+					},
+					"response": []
+				},
+				{
+					"name": "Login User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.success && jsonData.data && jsonData.data.token) {",
+									"    pm.collectionVariables.set(\"authToken\", jsonData.data.token);",
+									"    console.log(\"Auth Token set automatically:\", jsonData.data.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"password\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Authenticate user credentials and receive JWT. Automatically sets authToken variable."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Profile (Me)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/auth/me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"me"
+							]
+						},
+						"description": "Get current authenticated user profile"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "Get Products List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/products?page=1&limit=10&search=",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "search",
+									"value": ""
+								},
+								{
+									"key": "minPrice",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "maxPrice",
+									"value": "",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Get paginated products list with optional search and price filters"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Product Detail",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/products/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products",
+								"1"
+							]
+						},
+						"description": "Get product details by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Product",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Gaming Headset 7.1\",\n  \"sku\": \"PROD-HDS-006\",\n  \"price\": 450000.00,\n  \"stock\": 30\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products"
+							]
+						},
+						"description": "Create a new product"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Product",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"price\": 14500000.00,\n  \"stock\": 20\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products",
+								"1"
+							]
+						},
+						"description": "Update product details"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Product",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/products/5",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products",
+								"5"
+							]
+						},
+						"description": "Delete product by ID"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Orders",
+			"item": [
+				{
+					"name": "Create Order (Atomic Transaction)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": 1\n    },\n    {\n      \"product_id\": 2,\n      \"quantity\": 2\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/orders",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"orders"
+							]
+						},
+						"description": "Create new order with pessimistic row locking and atomic stock reduction"
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Orders",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/orders?page=1&limit=10",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"orders"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Get order history for current authenticated user"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Order Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/orders/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"orders",
+								"1"
+							]
+						},
+						"description": "Get order details and item list (with ownership check)"
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Order",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"cancelled\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/orders/1/status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"orders",
+								"1",
+								"status"
+							]
+						},
+						"description": "Cancel order and restore product stock within database transaction"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
