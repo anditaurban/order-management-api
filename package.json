@@ -5,6 +5,9 @@
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
+    "prestart": "node database/init-db.js",
+    "db:init": "node database/init-db.js",
+    "db:seed": "node database/init-db.js --seed",
     "dev": "nodemon src/server.js"
   },
   "keywords": [

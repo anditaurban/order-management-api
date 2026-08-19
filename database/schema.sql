@@ -1,4 +1,4 @@
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(255) NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE users (
   COLLATE utf8mb4_unicode_ci;
 
 
-CREATE TABLE products (
+CREATE TABLE IF NOT EXISTS products (
     id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     name VARCHAR(150) NOT NULL,
     sku VARCHAR(100) NOT NULL,
@@ -30,7 +30,7 @@ CREATE TABLE products (
   COLLATE utf8mb4_unicode_ci;
 
 
-CREATE TABLE orders (
+CREATE TABLE IF NOT EXISTS orders (
     id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     user_id BIGINT UNSIGNED NOT NULL,
     status ENUM('pending', 'processing', 'completed', 'cancelled')
@@ -52,7 +52,7 @@ CREATE TABLE orders (
   COLLATE utf8mb4_unicode_ci;
 
 
-CREATE TABLE order_items (
+CREATE TABLE IF NOT EXISTS order_items (
     id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     order_id BIGINT UNSIGNED NOT NULL,
     product_id BIGINT UNSIGNED NOT NULL,
