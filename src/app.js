@@ -5,26 +5,27 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-const routes = require('./routes');
 const { apiLimiter } = require('./middlewares/rateLimiter.middleware');
-const { errorHandler, notFoundHandler } = require('./middlewares/error.middleware');
+const {
+    errorHandler,
+    notFoundHandler
+} = require('./middlewares/error.middleware');
 
 const app = express();
 
-// 1. Security Headers Middleware
-app.use(helmet());
+console.log('APP: Express created');
 
-// 2. Cross-Origin Resource Sharing
+app.use(helmet());
 app.use(cors());
 
-// 3. Request Body Parsers (with size limits)
 app.use(express.json({ limit: '10kb' }));
-app.use(express.urlencoded({ extended: true, limit: '10kb' }));
+app.use(express.urlencoded({
+    extended: true,
+    limit: '10kb'
+}));
 
-// 4. Rate Limiting Middleware
 app.use('/api', apiLimiter);
 
-// 5. Root & Health Check Endpoint
 app.get('/', (req, res) => {
     res.status(200).json({
         success: true,
@@ -41,13 +42,17 @@ app.get('/health', (req, res) => {
     });
 });
 
-// 6. Mount API v1 Routes
+console.log('APP: Before loading routes');
+
+const routes = require('./routes');
+
+console.log('APP: Routes loaded');
+
 app.use('/api/v1', routes);
 
-// 7. Handle Unmatched Routes (404)
 app.use(notFoundHandler);
-
-// 8. Centralized Global Error Handler
 app.use(errorHandler);
+
+console.log('APP: Application configured');
 
 module.exports = app;
