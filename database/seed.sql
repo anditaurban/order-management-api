@@ -1,4 +1,4 @@
-USE order_management;
+USE railway;
 
 -- Clear existing data (optional / idempotent execution)
 SET FOREIGN_KEY_CHECKS = 0;
