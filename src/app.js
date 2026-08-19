@@ -34,6 +34,13 @@ app.get('/', (req, res) => {
     });
 });
 
+app.get('/health', (req, res) => {
+    res.status(200).json({
+        status: 'ok',
+        message: 'Orders API is running'
+    });
+});
+
 // 6. Mount API v1 Routes
 app.use('/api/v1', routes);
 
